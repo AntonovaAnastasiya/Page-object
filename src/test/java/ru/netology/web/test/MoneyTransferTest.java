@@ -28,6 +28,46 @@ class MoneyTransferTest {
         verificationPage.validVerify(verificationCode);
     }
 
+    @Test
+    void shouldTransferMoneyFromFirstCardToSecondCard() {
+        val dashboardPage = new DashboardPage();
+        int amount = 200;
+        val secondCardBalanceStart = dashboardPage.getSecondCardBalance();
+        val firstCardBalanceStart = dashboardPage.getFirstCardBalance();
 
 
+        val moneyTransfer = clickSecondCardButton();
+        moneyTransfer.moneyTransfer(amount, getFirstCardNumber());
+        val secondCardBalanceResult = secondCardBalanceStart + amount;
+        val firstCardBalanceResult = firstCardBalanceStart - amount;
+
+
+        assertEquals(firstCardBalanceResult, dashboardPage.getFirstCardBalance());
+        assertEquals(secondCardBalanceResult, dashboardPage.getSecondCardBalance());
+    }
+
+    @Test
+    void shouldTransferMoneyFromSecondCardToFirstCard() {
+        val dashboardPage = new DashboardPage();
+        int amount = 50;
+        val firstCardBalanceStart = dashboardPage.getFirstCardBalance();
+        val secondCardBalanceStart = dashboardPage.getSecondCardBalance();
+
+        val moneyTransfer = clickFirstCardButton();
+        moneyTransfer.moneyTransfer(amount, getSecondCardNumber());
+        val firstCardBalanceResult = firstCardBalanceStart + amount;
+        val secondCardBalanceResult = secondCardBalanceStart - amount;
+
+        assertEquals(firstCardBalanceResult, dashboardPage.getFirstCardBalance());
+        assertEquals(secondCardBalanceResult, dashboardPage.getSecondCardBalance());
+    }
+
+    @Test
+    void shouldBeErrorWhenTransferMoneyMoreThanBalance() {
+        int amount = 15300;
+        val moneyTransfer = clickSecondCardButton();
+        moneyTransfer.moneyTransfer(amount, getFirstCardNumber());
+        moneyTransfer.getErrorLimit();
+
+    }
 }
